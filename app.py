@@ -12,18 +12,23 @@ import logging
 from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
+
+
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
 
 app = Flask(__name__)
-moment = Moment(app)
 app.config.from_object('config')
 db = SQLAlchemy(app)
+moment = Moment(app)
 
-# TODO: connect to a local postgresql database
-
-
+# --------------------
+# IMPORT MODELS HERE | 
+# TO AVOID CIRCULER  |
+# IMPORT             |
+# -------------------
+from models import *
 #----------------------------------------------------------------------------#
 # Filters.
 #----------------------------------------------------------------------------#
@@ -37,6 +42,7 @@ def format_datetime(value, format='medium'):
   return babel.dates.format_datetime(date, format, locale='en')
 
 app.jinja_env.filters['datetime'] = format_datetime
+
 
 #----------------------------------------------------------------------------#
 # Controllers.
@@ -477,12 +483,12 @@ if not app.debug:
 #----------------------------------------------------------------------------#
 
 # Default port:
-# if __name__ == '__main__':
-#     app.run()
+if __name__ == '__main__':
+    app.run()
 
 # Or specify port manually:
-
+'''
 if __name__ == '__main__':
-    # port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0')
-
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
+'''
