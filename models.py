@@ -29,7 +29,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://mike-savy:dreamlife!@local
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
 
-show = db.Table('show',
+show = db.Table('Show',
     db.Column('artist_id', db.Integer, db.ForeignKey('artists.id'), primary_key = True),
     db.Column('venue_id', db.Integer, db.ForeignKey('venues.id'), primary_key = True),
     db.Column('start_time',db.DateTime, nullable = False )
@@ -46,10 +46,15 @@ class Venue(db.Model):
     phone = db.Column(db.String(120))
     facebook_link = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
+    genres = db.Column(db.String())
     website_link = db.Column(db.String(120))
-    looking_talent = db.Column(db.Boolean, nullable = False, default= False)
-    seek_decription = db.Column(db.String())
-  
+    seeking_talent = db.Column(db.Boolean, nullable = False, default= False)
+    seeking_description = db.Column(db.String())
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    
+    def __repr__(self):
+            return f'<Venue ID: {self.id}, Name: {self.name}>'
+
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
@@ -61,14 +66,17 @@ class Artist(db.Model):
     city = db.Column(db.String(120))
     state = db.Column(db.String(120))
     phone = db.Column(db.String(120))
-    genres = db.Column(db.String(120))
+    genres = db.Column(db.String())
     facebook_link = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     website_link = db.Column(db.String(120))
-    looking_talent = db.Column(db.Boolean, nullable = False, default= False)
-    seek_decription = db.Column(db.String())
+    seeking_venue = db.Column(db.Boolean, nullable = False, default= False)
+    seeking_description = db.Column(db.String())
     venues = db.relationship('Venue', secondary = show, backref = db.backref('artists', lazy = True))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
+    def __repr__(self):
+            return f'<Artist ID: {self.id}, Name: {self.name}>'
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
