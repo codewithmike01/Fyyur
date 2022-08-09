@@ -53,7 +53,7 @@ class Venue(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     
     def __repr__(self):
-            return f'<Venue ID: {self.id}, Name: {self.name}>'
+            return f'<Venue ID: {self.id}, Name: {self.name}> , State: {self.state}'
 
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
