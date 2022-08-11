@@ -6,7 +6,7 @@ import json
 from re import I
 import dateutil.parser
 # To use select associated table
-from sqlalchemy.sql import select
+from sqlalchemy.sql import select, func
 import babel
 import sys
 from flask import Flask, render_template, request, Response, flash, redirect, url_for
@@ -88,45 +88,17 @@ def venues():
 
       # Loop to group state
       for state in all_states:
-          # stm = select([func.count(show.venue_id)]).\
-          #           where(show.venue_id == state.id).\
-          #           label("venue_count")
-          # inc = select(show, stm)
-          # print(inc)
+          stmt =select([show]).where( show.c.venue_id ==  venue.id)
+          result = list(db.session.execute(stmt))
           
           item_obj["venues"].append({
             "id": state.id,
             "name": state.name,
-            "num_upcoming_shows": 0,
+            "num_upcoming_shows": len(result),
           })
 
       # Save the collection and grouping of states
       data.append(item_obj)
- 
-
-
-          
-  # data=[{
-  #   "city": "San Francisco",
-  #   "state": "CA",
-  #   "venues": [{
-  #     "id": 1,
-  #     "name": "The Musical Hop",
-  #     "num_upcoming_shows": 0,
-  #   }, {
-  #     "id": 3,
-  #     "name": "Park Square Live Music & Coffee",
-  #     "num_upcoming_shows": 1,
-  #   }]
-  # }, {
-  #   "city": "New York",
-  #   "state": "NY",
-  #   "venues": [{
-  #     "id": 2,
-  #     "name": "The Dueling Pianos Bar",
-  #     "num_upcoming_shows": 0,
-  #   }]
-  # }]
   return render_template('pages/venues.html', areas=data)
 
 @app.route('/venues/search', methods=['POST'])
@@ -136,19 +108,30 @@ def search_venues():
   # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
   search_term = request.form.get("search_term", "")
 
-  print(search_term)
-  venues = Venue.query.filter(Venue.state.ilike("{search_term}%")).all()
-  for venue in venues:
-      print(venue)
+  response = {}
+  venues = list(Venue.query.filter(
+    Venue.state.ilike(f"%{search_term}%") |
+    Venue.name.ilike(f"%{search_term}%")  |
+    Venue.city.ilike(f"%{search_term}%") 
+    ).all())
 
-  response={
-    "count": 1,
-    "data": [{
-      "id": 2,
-      "name": "The Dueling Pianos Bar",
-      "num_upcoming_shows": 0,
-    }]
-  }
+  response['count'] = len(venues)
+  response["data"] = []
+ 
+  
+ 
+  for venue in venues:
+
+      stmt =select([show]).where( show.c.venue_id ==  venue.id)
+      result = list(db.session.execute(stmt))
+      
+      venue_unit = {
+          "id": venue.id,
+          "name": venue.name,
+          "num_upcoming_shows": len(result),
+      }
+      response["data"].append(venue_unit)
+
   return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
 
 @app.route('/venues/<int:venue_id>')
@@ -157,8 +140,21 @@ def show_venue(venue_id):
   # TODO: replace with real venue data from the venues table, using venue_id
   venues = Venue.query.all()
   data = []
-  for venue in venues:
+  past_show = []
+  stmt =select([show]).where( show.c.venue_id ==  venue.id)
+  result = list(db.session.execute(stmt))
 
+  for show in result:
+      if show[2] < datetime.now():
+          artist = Artist.query.get(show[0])
+          past_show.append({
+            "artist_id": artist.id,
+            "artist_name": artist.name,
+            "artist_image_link": artist.image_link,
+            "start_time": "2019-05-21T21:30:00.000Z"
+              })
+  for venue in venues:
+      
       item_obj = {
         "id": venue.id,
         "name": venue.name,
@@ -266,6 +262,8 @@ def show_venue(venue_id):
   data = list(filter(lambda d: d['id'] == venue_id, data))[0]
   return render_template('pages/show_venue.html', venue=data)
 
+
+
 #  Create Venue
 #  ----------------------------------------------------------------
 
@@ -354,14 +352,31 @@ def search_artists():
   # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
   # seach for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
   # search for "band" should return "The Wild Sax Band".
-  response={
-    "count": 1,
-    "data": [{
-      "id": 4,
-      "name": "Guns N Petals",
-      "num_upcoming_shows": 0,
-    }]
-  }
+  search_term = request.form.get("search_term", "")
+
+  response = {}
+  artists = list(Artist.query.filter(
+    Artist.state.ilike(f"%{search_term}%") |
+    Artist.name.ilike(f"%{search_term}%")  |
+    Artist.city.ilike(f"%{search_term}%") 
+    ).all())
+
+  response['count'] = len(artists)
+  response["data"] = []
+ 
+  
+ 
+  for artist in artists:
+
+      stmt =select([show]).where( show.c.artist_id ==  artist.id)
+      result = list(db.session.execute(stmt))
+      
+      venue_unit = {
+          "id": artist.id,
+          "name": artist.name,
+          "num_upcoming_shows": len(result),
+      }
+      response["data"].append(venue_unit)
   return render_template('pages/search_artists.html', results=response, search_term=request.form.get('search_term', ''))
 
 @app.route('/artists/<int:artist_id>')
