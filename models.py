@@ -19,10 +19,8 @@ db.init_app(app)
 migrate = Migrate(app, db)
 
 # TODO: connect to a local postgresql database
-
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://mike-savy:dreamlife!@localhost:5432/fyyur'
-
-
+        # IN Config file
+    
 #----------------------------------------------------------------------------#
 # Models.
 #----------------------------------------------------------------------------#
