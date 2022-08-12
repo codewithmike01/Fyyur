@@ -1,10 +1,9 @@
 
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 # from sqlalchemy import Column, String, Integer, Boolean, DateTime, ARRAY, ForeignKey
 #IMPORTING  APP.py
-from app import app
+# from app import app
 
 
 #----------------------------------------------------------------------------#
@@ -12,11 +11,9 @@ from app import app
 #----------------------------------------------------------------------------#
 
 #connecting to the local postgresql database definedd in the config file
-app.config.from_object('config')
-db = SQLAlchemy(app)
-db.app = app
-db.init_app(app)
-migrate = Migrate(app, db)
+# app.config.from_object('config')
+db = SQLAlchemy()
+
 
 # TODO: connect to a local postgresql database
         # IN Config file

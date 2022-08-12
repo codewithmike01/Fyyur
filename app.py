@@ -3,7 +3,7 @@
 #----------------------------------------------------------------------------#
 
 import json
-from re import I
+from flask_migrate import Migrate
 import dateutil.parser
 # To use select associated table
 from sqlalchemy.sql import select, func
@@ -16,25 +16,27 @@ import logging
 from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
+# --------------------
+# IMPORT MODELS      | 
 
+from models import db, Venue, show, Artist
 
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
 
 app = Flask(__name__)
-app.config.from_object('config')
-db = SQLAlchemy(app)
 moment = Moment(app)
+app.config.from_object('config')
+db.init_app(app)
+migrate = Migrate(app, db)
 
 
 
-# --------------------
-# IMPORT MODELS HERE | 
-# TO AVOID CIRCULER  |
-# IMPORT             |
-# -------------------
-from models import *
+
+
+
+
 #----------------------------------------------------------------------------#
 # Filters.
 #----------------------------------------------------------------------------#
@@ -210,7 +212,7 @@ def create_venue_form():
 def create_venue_submission():
   # TODO: insert form data as a new Venue record in the db, instead
   form = VenueForm(request.form)
- 
+  
   try:
     new_venue = Venue(
       name =  form.name.data,
@@ -610,9 +612,9 @@ if not app.debug:
 
 
 # Default port:
-# if __name__ == '__main__':
-#     app.debug = True
-#     app.run(host='0.0.0.0')
+if __name__ == '__main__':
+    app.debug = True
+    app.run(host='0.0.0.0')
 
 # Or specify port manually:
 
