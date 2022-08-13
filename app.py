@@ -187,7 +187,7 @@ def show_venue(venue_id):
   return render_template('pages/show_venue.html', venue=data)
 
 
-
+#  ----------------------------------------------------------------
 #  Create Venue
 #  ----------------------------------------------------------------
 
@@ -216,7 +216,7 @@ def create_venue_submission():
           seeking_description =  form.seeking_description.data,
           website_link =  form.website_link.data
         )
-        
+
         db.session.add(new_venue)
         db.session.commit()
         flash('Venue ' + request.form['name'] + ' was successfully listed!')
