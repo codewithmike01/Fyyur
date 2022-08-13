@@ -57,6 +57,9 @@
                 (request.endpoint == 'search_venues') or
                 (request.endpoint == 'show_venue') %}
               <form class="search" method="post" action="/venues/search">
+                 <!-- To hide Csrf -->
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                  <!-- end -->
                 <input class="form-control"
                   type="search"
                   name="search_term"
@@ -68,6 +71,9 @@
                 (request.endpoint == 'search_artists') or
                 (request.endpoint == 'show_artist') %}
               <form class="search" method="post" action="/artists/search">
+                 <!-- To hide Csrf -->
+                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                 <!-- end -->
                 <input class="form-control"
                   type="search"
                   name="search_term"
