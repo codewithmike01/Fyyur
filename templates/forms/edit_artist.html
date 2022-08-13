@@ -5,7 +5,7 @@ block content %}
     <h3 class="form-heading">Edit artist <em>{{ artist.name }}</em></h3>
     <div class="form-group">
       <!-- To hide Csrf -->
-      <!-- <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" /> -->
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
       <!-- end -->
       <label for="name">Name</label>
       {{ form.name(class_ = 'form-control', autofocus = true) }}

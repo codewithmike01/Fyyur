@@ -16,7 +16,7 @@ from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
  
-# from extensions import csrf
+from extensions import csrf
 
 from models import db, Venue, Show, Artist
 
@@ -27,7 +27,7 @@ from models import db, Venue, Show, Artist
 app = Flask(__name__)
 moment = Moment(app)
 app.config.from_object('config')
-# csrf.init_app(app)
+csrf.init_app(app)
 db.init_app(app)
 migrate = Migrate(app, db)
 
