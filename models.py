@@ -69,6 +69,6 @@ class Show(db.Model):
     venue_id = db.Column(db.Integer, db.ForeignKey("venues.id"), nullable=False)
     start_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
-#     def __repr__(self):
-#          return f"<Show id={self.id} artist_id={self.artist_id} venue_id={self.venue_id} start_time={self.start_time}"
+    def __repr__(self):
+         return f"<Show id={self.id} artist_id={self.artist_id} venue_id={self.venue_id} start_time={self.start_time}"
 

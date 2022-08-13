@@ -230,7 +230,7 @@ def create_venue_submission():
 
 
  
-
+# Delete Venue
 
 @app.route('/venues/<venue_id>/delete', methods=['POST'])
 def delete_venue(venue_id):
@@ -372,6 +372,7 @@ def edit_artist(artist_id):
 def edit_artist_submission(artist_id):
 
   form = ArtistForm(request.form)
+  
   if form.validate():
       try:
           artist_details = Artist.query.get(artist_id)
@@ -403,6 +404,7 @@ def edit_venue(venue_id):
   form = VenueForm()
   venue_details = Venue.query.get(venue_id)
   venue={
+    "id": venue_details.id,
     "name": venue_details.name,
     "genres": venue_details.genres.split(),
     "address":venue_details.address,
@@ -417,41 +419,39 @@ def edit_venue(venue_id):
   }
   return render_template('forms/edit_venue.html', form=form, venue=venue)
 
+
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
     print(venue_id)
-    # print("i am try in edit")
-    # form = VenueForm(request.form)
-    # if form.validate():
-    #     print('validated')
-    # try:
-    #     print("i am try")
-    #     venue_details = Venue.query.get(venue_id)
+    form = VenueForm(request.form)
+    print('IN sub form')
+    if form.validate():
+        try:
+            venue_details = Venue.query.get(venue_id)
 
-    #     venue_details.name =  form.name.data,
-    #     venue_details.genres =  " ".join(form.genres.data),
-    #     venue_details.state =  form.state.data
-    #     venue_details.address = form.address.data
-    #     venue_details.city =  form.city.data
-    #     venue_details.phone =  form.phone.data
-    #     venue_details.website_link =  form.website_link.data
-    #     venue_details.facebook_link =  form.facebook_link.data
-    #     venue_details.seeking_description =  form.seeking_description.data
-    #     venue_details.image_link =  form.image_link.data
-    #     venue_details.seeking_talent =  form.seeking_talent.data
-    #     db.session.commit()
-    #     flash('Venue ' + request.form['name'] + ' was successfully listed!')
-    # except:
-    #     print("i am expect")
-    #     print(sys.exc_info())
-    #     flash('Venue ' + request.form['name'] + ' Failure!!! to  update')
-    #     db.session.rollback()
-    # finally:
-    #     print('i am here end')
-    #     db.session.close()
-    #     return redirect(url_for('show_venue', venue_id=venue_id))
-
-
+            venue_details.name =  form.name.data,
+            venue_details.genres =  " ".join(form.genres.data),
+            venue_details.state =  form.state.data
+            venue_details.address = form.address.data
+            venue_details.city =  form.city.data
+            venue_details.phone =  form.phone.data
+            venue_details.website_link =  form.website_link.data
+            venue_details.facebook_link =  form.facebook_link.data
+            venue_details.seeking_description =  form.seeking_description.data
+            venue_details.image_link =  form.image_link.data
+            venue_details.seeking_talent =  form.seeking_talent.data
+            db.session.commit()
+            flash('Venue ' + request.form['name'] + ' was successfully listed!')
+        except:
+            print("i am expect")
+            print(sys.exc_info())
+            flash('Venue ' + request.form['name'] + ' Failure!!! to  update')
+            db.session.rollback()
+        finally:
+            db.session.close()
+            return redirect(url_for('show_venue', venue_id=venue_id))
+    else:
+        flash('Could not update Venue')
 
 #  Create Artist
 #  ----------------------------------------------------------------
@@ -493,6 +493,21 @@ def create_artist_submission():
       flash('Could not create artist, Please enter valid input')
 
 
+# Delete Artist
+
+@app.route('/artists/<artist_id>/delete', methods=['POST'])
+def delete_artist(artist_id):
+    try:
+      artist = Artist.query.get(artist_id)
+      db.session.delete(artist)
+      db.session.commit()
+      flash('SuccessFully!!! deleted')
+    except:
+      db.session.rollback()
+      flash('Failed to deleted')
+    finally:
+      db.session.close()
+      return redirect(url_for('index'))
   
 
 #  Shows
