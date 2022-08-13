@@ -4,6 +4,9 @@ block content %}
   <form method="post" class="form">
     <h3 class="form-heading">List a new artist</h3>
     <div class="form-group">
+      <!-- To hide Csrf -->
+      <!-- <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" /> -->
+      <!-- end -->
       <label for="name">Name</label>
       {{ form.name(class_ = 'form-control', autofocus = true) }}
     </div>

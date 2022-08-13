@@ -103,6 +103,9 @@ block content %}
     action="/venues/{{venue.id}}/delete"
     class="p-2"
   >
+    <!-- To hide Csrf -->
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <!-- end -->
     <button class="btn btn-primary btn-lg">Delete</button>
   </form>
 </div>
