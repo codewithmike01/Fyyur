@@ -9,25 +9,30 @@ block content %}
       ></a>
     </h3>
     <div class="form-group">
+      <!-- To hide Csrf -->
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+      <!-- end -->
       <label for="name">Name</label>
-      {{ form.name(class_ = 'form-control', autofocus = true) }}
+      {{ form.name(class_ = 'form-control', autofocus = true, required = true)
+      }}
     </div>
     <div class="form-group">
       <label>City & State</label>
       <div class="form-inline">
         <div class="form-group">
           {{ form.city(class_ = 'form-control', placeholder='City', autofocus =
-          true) }}
+          true, required = true) }}
         </div>
         <div class="form-group">
           {{ form.state(class_ = 'form-control', placeholder='State', autofocus
-          = true) }}
+          = true, required = true) }}
         </div>
       </div>
     </div>
     <div class="form-group">
       <label for="address">Address</label>
-      {{ form.address(class_ = 'form-control', autofocus = true) }}
+      {{ form.address(class_ = 'form-control', autofocus = true, required =
+      true) }}
     </div>
     <div class="form-group">
       <label for="phone">Phone</label>
