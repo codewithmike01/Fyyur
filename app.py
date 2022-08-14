@@ -138,28 +138,30 @@ def show_venue(venue_id):
   past_show = []
   upcoming_show =[]
  
-  result = Show.query.filter_by( venue_id =  venue.id).all()
-         
-  # Past Show & Upcoming show
-  for show_details in result:
-      # print(show_details[0])
-      artist = Artist.query.get(show_details.artist_id)
+    
+  # Past Show 
+  past_shows = db.session.query(Show).join(Venue).filter(Show.venue_id == venue.id).filter(Show.start_time<datetime.now()).all() 
+  
+  for show in past_shows:
+      artist = Artist.query.get(show.artist_id)
+      past_show.append({
+        "artist_id": artist.id,
+        "artist_name": artist.name,
+        "artist_image_link": artist.image_link,
+        "start_time": show.start_time.strftime("%m/%d/%Y, %H:%M:%S")
+          })
 
-      
-      if  show_details.start_time < datetime.now():
-          past_show.append({
-            "artist_id": artist.id,
-            "artist_name": artist.name,
-            "artist_image_link": artist.image_link,
-            "start_time":show_details.start_time.strftime("%m/%d/%Y, %H:%M:%S")
-              })
-      else:
-          upcoming_show.append({
-          "artist_id": artist.id,
-          "artist_name": artist.name,
-          "artist_image_link": artist.image_link,
-          "start_time":show_details.start_time.strftime("%m/%d/%Y, %H:%M:%S")
-            })
+  # Upcoming Show
+  upcoming_shows = db.session.query(Show).join(Venue).filter(Show.venue_id == venue.id).filter(Show.start_time>datetime.now()).all() 
+  
+  for show in upcoming_shows:
+      artist_up = Artist.query.get(show.artist_id)
+      upcoming_show.append({
+      "artist_id": artist_up.id,
+      "artist_name": artist_up.name,
+      "artist_image_link": artist_up.image_link,
+      "start_time": show.start_time.strftime("%m/%d/%Y, %H:%M:%S")
+        })
       
       
   item_obj = {
@@ -177,8 +179,8 @@ def show_venue(venue_id):
     "image_link": venue.image_link,
     "past_shows": past_show,
     "upcoming_shows": upcoming_show,
-    "past_shows_count": len(past_show),
-    "upcoming_shows_count": len(upcoming_show),
+    "past_shows_count": len(past_shows),
+    "upcoming_shows_count": len(upcoming_shows),
   }
      
   data.append( item_obj)
@@ -298,29 +300,35 @@ def show_artist(artist_id):
   upcoming_shows = []
   past_shows = []
 
-  # for artist in artists:
-  result = Show.query.filter_by(artist_id = artist.id ).all()
+  
+  past_shows_results = db.session.query(Show).join(Artist).filter(Show.artist_id == artist.id).filter(Show.start_time<datetime.now()).all() 
+  
  
 
-  # Past Show & Upcoming show
-  for show_details in result:
-      
-      venue_item = Venue.query.get(show_details.venue_id)
+  # Past Show 
+  for show in past_shows_results:
+      venue_item = Venue.query.get(show.venue_id)
+      past_shows.append({
+        "venue_id": venue_item.id,
+        "e_item_name": venue_item.name,
+        "venue_image_link": venue_item.image_link,
+        "start_time":show.start_time.strftime("%m/%d/%Y, %H:%M:%S")
+          })
+
+  
+  # Upcoming show
+  upcoming_shows_results = db.session.query(Show).join(Artist).filter(Show.artist_id == artist.id).filter(Show.start_time<datetime.now()).all() 
+  
+  for show in upcoming_shows_results:
+      venue_item = Venue.query.get(show.venue_id)
+
+      upcoming_shows.append({
+      "venue_id": venue_item.id,
+      "venue_name": venue_item.name,
+      "venue_image_link": venue_item.image_link,
+      "start_time":show.start_time.strftime("%m/%d/%Y, %H:%M:%S")
+        })
      
-      if  show_details.start_time < datetime.now():
-          past_shows.append({
-            "venue_id": venue_item.id,
-            "e_item_name": venue_item.name,
-            "venue_image_link": venue_item.image_link,
-            "start_time":show_details.start_time.strftime("%m/%d/%Y, %H:%M:%S")
-              })
-      else:
-          upcoming_shows.append({
-          "venue_id": venue_item.id,
-          "venue_name": venue_item.name,
-          "venue_image_link": venue_item.image_link,
-          "start_time":show_details.start_time.strftime("%m/%d/%Y, %H:%M:%S")
-            })
 
   item_obj = {
     "id": artist.id,
@@ -336,8 +344,8 @@ def show_artist(artist_id):
     "image_link": artist.image_link,
     "past_shows": past_shows,
     "upcoming_shows": upcoming_shows,
-    "past_shows_count": len(past_shows),
-    "upcoming_shows_count": len(upcoming_shows),
+    "past_shows_count": len(past_shows_results),
+    "upcoming_shows_count": len(upcoming_shows_results),
   }
   
   data.append( item_obj)
